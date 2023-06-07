@@ -1,0 +1,182 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="BookClubModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+  <EntityType Name="Authors">
+    <Key>
+      <PropertyRef Name="AuthorId" />
+    </Key>
+    <Property Name="AuthorId" Type="Int32" Nullable="false" />
+    <Property Name="AuthorName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Books" Relationship="Self.FK_Books_Authors" FromRole="Authors" ToRole="Books" />
+  </EntityType>
+  <EntityType Name="Books">
+    <Key>
+      <PropertyRef Name="BookId" />
+    </Key>
+    <Property Name="BookId" Type="Int32" Nullable="false" />
+    <Property Name="BookName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="BookDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="BookPhoto" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="BookPrice" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+    <Property Name="BookDiscount" Type="Int32" Nullable="false" />
+    <Property Name="BookCountInStock" Type="Int32" Nullable="false" />
+    <Property Name="BookManufacturerId" Type="Int32" Nullable="false" />
+    <Property Name="BookAuthorId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Authors" Relationship="Self.FK_Books_Authors" FromRole="Books" ToRole="Authors" />
+    <NavigationProperty Name="Manufacturers" Relationship="Self.FK_Books_Manufacturers" FromRole="Books" ToRole="Manufacturers" />
+    <NavigationProperty Name="OrderToBooks" Relationship="Self.FK_OrderToBooks_Books" FromRole="Books" ToRole="OrderToBooks" />
+  </EntityType>
+  <EntityType Name="Manufacturers">
+    <Key>
+      <PropertyRef Name="ManufacturerId" />
+    </Key>
+    <Property Name="ManufacturerId" Type="Int32" Nullable="false" />
+    <Property Name="ManufacturerName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Books" Relationship="Self.FK_Books_Manufacturers" FromRole="Manufacturers" ToRole="Books" />
+  </EntityType>
+  <EntityType Name="Orders">
+    <Key>
+      <PropertyRef Name="OrderId" />
+    </Key>
+    <Property Name="OrderId" Type="Int32" Nullable="false" />
+    <Property Name="OrderPickUpCode" Type="Int32" Nullable="false" />
+    <Property Name="OrderPickUpPointId" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="PickUpPoints" Relationship="Self.FK_Orders_PickUpPoints" FromRole="Orders" ToRole="PickUpPoints" />
+    <NavigationProperty Name="OrderToBooks" Relationship="Self.FK_OrderToBooks_Orders" FromRole="Orders" ToRole="OrderToBooks" />
+  </EntityType>
+  <EntityType Name="OrderToBooks">
+    <Key>
+      <PropertyRef Name="OrderToBookId" />
+    </Key>
+    <Property Name="OrderToBookId" Type="Int32" Nullable="false" />
+    <Property Name="OrderId" Type="Int32" Nullable="false" />
+    <Property Name="BookId" Type="Int32" Nullable="false" />
+    <Property Name="CountBookInOrder" Type="Int32" Nullable="false" />
+    <NavigationProperty Name="Books" Relationship="Self.FK_OrderToBooks_Books" FromRole="OrderToBooks" ToRole="Books" />
+    <NavigationProperty Name="Orders" Relationship="Self.FK_OrderToBooks_Orders" FromRole="OrderToBooks" ToRole="Orders" />
+  </EntityType>
+  <EntityType Name="PickUpPoints">
+    <Key>
+      <PropertyRef Name="PickUpPointId" />
+    </Key>
+    <Property Name="PickUpPointId" Type="Int32" Nullable="false" />
+    <Property Name="PickUpPointAddress" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+    <NavigationProperty Name="Orders" Relationship="Self.FK_Orders_PickUpPoints" FromRole="PickUpPoints" ToRole="Orders" />
+  </EntityType>
+  <EntityType Name="Statuses">
+    <Key>
+      <PropertyRef Name="StatusId" />
+    </Key>
+    <Property Name="StatusId" Type="Int32" Nullable="false" />
+    <Property Name="StatusName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+  </EntityType>
+  <EntityType Name="sysdiagrams">
+    <Key>
+      <PropertyRef Name="diagram_id" />
+    </Key>
+    <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+    <Property Name="principal_id" Type="Int32" Nullable="false" />
+    <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="version" Type="Int32" />
+    <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+  </EntityType>
+  <Association Name="FK_Books_Authors">
+    <End Role="Authors" Type="Self.Authors" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Books" Type="Self.Books" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Authors">
+        <PropertyRef Name="AuthorId" />
+      </Principal>
+      <Dependent Role="Books">
+        <PropertyRef Name="BookAuthorId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Books_Manufacturers">
+    <End Role="Manufacturers" Type="Self.Manufacturers" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Books" Type="Self.Books" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Manufacturers">
+        <PropertyRef Name="ManufacturerId" />
+      </Principal>
+      <Dependent Role="Books">
+        <PropertyRef Name="BookManufacturerId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_OrderToBooks_Books">
+    <End Role="Books" Type="Self.Books" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="OrderToBooks" Type="Self.OrderToBooks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Books">
+        <PropertyRef Name="BookId" />
+      </Principal>
+      <Dependent Role="OrderToBooks">
+        <PropertyRef Name="BookId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Orders_PickUpPoints">
+    <End Role="PickUpPoints" Type="Self.PickUpPoints" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="Orders" Type="Self.Orders" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="PickUpPoints">
+        <PropertyRef Name="PickUpPointId" />
+      </Principal>
+      <Dependent Role="Orders">
+        <PropertyRef Name="OrderPickUpPointId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_OrderToBooks_Orders">
+    <End Role="Orders" Type="Self.Orders" Multiplicity="1">
+      <OnDelete Action="Cascade" />
+    </End>
+    <End Role="OrderToBooks" Type="Self.OrderToBooks" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Orders">
+        <PropertyRef Name="OrderId" />
+      </Principal>
+      <Dependent Role="OrderToBooks">
+        <PropertyRef Name="OrderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="BookClubEntities" annotation:LazyLoadingEnabled="true">
+    <EntitySet Name="Authors" EntityType="Self.Authors" />
+    <EntitySet Name="Books" EntityType="Self.Books" />
+    <EntitySet Name="Manufacturers" EntityType="Self.Manufacturers" />
+    <EntitySet Name="Orders" EntityType="Self.Orders" />
+    <EntitySet Name="OrderToBooks" EntityType="Self.OrderToBooks" />
+    <EntitySet Name="PickUpPoints" EntityType="Self.PickUpPoints" />
+    <EntitySet Name="Statuses" EntityType="Self.Statuses" />
+    <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" />
+    <AssociationSet Name="FK_Books_Authors" Association="Self.FK_Books_Authors">
+      <End Role="Authors" EntitySet="Authors" />
+      <End Role="Books" EntitySet="Books" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Books_Manufacturers" Association="Self.FK_Books_Manufacturers">
+      <End Role="Manufacturers" EntitySet="Manufacturers" />
+      <End Role="Books" EntitySet="Books" />
+    </AssociationSet>
+    <AssociationSet Name="FK_OrderToBooks_Books" Association="Self.FK_OrderToBooks_Books">
+      <End Role="Books" EntitySet="Books" />
+      <End Role="OrderToBooks" EntitySet="OrderToBooks" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Orders_PickUpPoints" Association="Self.FK_Orders_PickUpPoints">
+      <End Role="PickUpPoints" EntitySet="PickUpPoints" />
+      <End Role="Orders" EntitySet="Orders" />
+    </AssociationSet>
+    <AssociationSet Name="FK_OrderToBooks_Orders" Association="Self.FK_OrderToBooks_Orders">
+      <End Role="Orders" EntitySet="Orders" />
+      <End Role="OrderToBooks" EntitySet="OrderToBooks" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
